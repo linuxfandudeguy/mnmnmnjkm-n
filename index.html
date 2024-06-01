@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Calculator</title>
+  <style>
+    /* Basic styling for the web OS */
+    body, html {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      height: 100%;
+      font-family: 'Arial', sans-serif;
+      background-color: #282c34;
+      overflow: hidden;
+      color: #fff;
+    }
+    .desktop {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      background: url('https://img.freepik.com/free-photo/purple-galaxy-background_1017-3748.jpg?t=st=1716986525~exp=1716990125~hmac=09c24c40447e34ec96f5db07dc703bc395a50c7add29b73d4cf07fe81b3207ed&w=740') no-repeat center center;
+      background-size: cover;
+    }
+    .window {
+      position: absolute;
+      width: 300px; /* Adjusted width for calculator */
+      height: 400px; /* Adjusted height for calculator */
+      background-color: rgba(0, 0, 0, 0.8);
+      border: 1px solid #666;
+      border-radius: 8px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+      display: flex;
+      flex-direction: column;
+      resize: both;
+      overflow: auto;
+      color: #fff;
+    }
+    .window-header {
+      background-color: #444;
+      border-top-left-radius: 8px;
+      border-top-right-radius: 8px;
+      padding: 10px;
+      cursor: move;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      color: #fff;
+    }
+    .window-header .close {
+      cursor: pointer;
+      background-color: #ff5c5c;
+      border: none;
+      border-radius: 50%;
+      width: 20px;
+      height: 20px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      color: #fff;
+      font-weight: bold;
+      line-height: 20px;
+    }
+    .window-content {
+      flex-grow: 1;
+      overflow: hidden;
+      border-bottom-left-radius: 8px;
+      border-bottom-right-radius: 8px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+    .calculator-input {
+      width: 80%;
+      margin-bottom: 10px;
+      padding: 10px;
+      border: 1px solid #666;
+      border-radius: 4px;
+      background-color: #555;
+      color: #fff;
+      text-align: right;
+    }
+    .calculator-button {
+      padding: 10px 20px;
+      border: none;
+      border-radius: 4px;
+      background-color: #2986CC
+;
+      color: #fff;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+      margin: 5px;
+    }
+    .calculator-button:hover {
+      background-color: #45a049;
+    }
+  </style>
+</head>
+<body>
+  <div class="desktop">
+    <!-- Calculator Window -->
+    <div class="window" id="calculatorWindow" style="top: 50px; left: 50px;">
+      <div class="window-header">
+        <span>Calculator</span>
+        <span class="close" onclick="document.getElementById('calculatorWindow').style.display='none';">×</span>
+      </div>
+      <div class="window-content">
+        <input type="text" id="calculatorInput" class="calculator-input" placeholder="0" readonly>
+        <div>
+          <button class="calculator-button" onclick="appendToInput('7')">7</button>
+          <button class="calculator-button" onclick="appendToInput('8')">8</button>
+          <button class="calculator-button" onclick="appendToInput('9')">9</button>
+          <button class="calculator-button" onclick="appendToInput('+')">+</button>
+        </div>
+        <div>
+          <button class="calculator-button" onclick="appendToInput('4')">4</button>
+          <button class="calculator-button" onclick="appendToInput('5')">5</button>
+          <button class="calculator-button" onclick="appendToInput('6')">6</button>
+          <button class="calculator-button" onclick="appendToInput('-')">-</button>
+        </div>
+        <div>
+          <button class="calculator-button" onclick="appendToInput('1')">1</button>
+          <button class="calculator-button" onclick="appendToInput('2')">2</button>
+          <button class="calculator-button" onclick="appendToInput('3')">3</button>
+          <button class="calculator-button" onclick="appendToInput('*')">*</button>
+        </div>
+        <div>
+          <button class="calculator-button" onclick="appendToInput('0')">0</button>
+          <button class="calculator-button" onclick="appendToInput('.')">.</button>
+          <button class="calculator-button" onclick="clearInput()">C</button>
+          <button class="calculator-button" onclick="calculateResult()">=</button>
+          <button class="calculator-button" onclick="appendToInput('/')">/</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Make window draggable
+    dragElement(document.getElementById("calculatorWindow"));
+
+    function dragElement(elmnt) {
+      var pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
+      if (elmnt.querySelector(".window-header")) {
+        elmnt.querySelector(".window-header").onmousedown = dragMouseDown;
+      } else {
+        elmnt.onmousedown = dragMouseDown;
+      }
+
+      function dragMouseDown(e) {
+        e = e || window.event;
+        e.preventDefault();
+        pos3 = e.clientX;
+        pos4 = e.clientY;
+        document.onmouseup = closeDragElement;
+        document.onmousemove = elementDrag;
+      }
+
+      function elementDrag(e) {
+        e = e || window.event;
+        e.preventDefault();
+        pos1 = pos3 - e.clientX;
+        pos2 = pos4 - e.clientY;
+        pos3 = e.clientX;
+        pos4 = e.clientY;
+        elmnt.style.top = (elmnt.offsetTop - pos2) + "px";
+        elmnt.style.left = (elmnt.offsetLeft - pos1) + "px";
+      }
+
+      function closeDragElement() {
+        document.onmouseup = null;
+        document.onmousemove = null;
+      }
+    }
+
+function appendToInput(value) {
+  document.getElementById('calculatorInput').value += value;
+}
+
+function clearInput() {
+  document.getElementById('calculatorInput').value = '';
+}
+
+function calculateResult() {
+  try {
+    const result = eval(document.getElementById('calculatorInput').value);
+    document.getElementById('calculatorInput').value = result;
+  } catch (error) {
+    document.getElementById('calculatorInput').value = 'Error';
+  }
+}
+</script>
+</body>
+</html>
